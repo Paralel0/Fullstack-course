@@ -16,6 +16,12 @@ const Positive = (props: { good: number; neutral: number; bad: number }) => {
   console.log("Positive percentage:", positive)
   return <p>Positive: {positive}%</p>
 }
+
+const StatisticsLine = (props: { text: string; value: number }) => {
+  const { text, value } = props
+  return (<p>{text} {value}</p>)
+}
+
 const Statistics = (props: { good: number; neutral: number; bad: number }) => {
   const { good, neutral, bad } = props
   const total = good + neutral + bad
@@ -24,9 +30,10 @@ const Statistics = (props: { good: number; neutral: number; bad: number }) => {
   }
   return (
     <div>
-      <p>Good {good}</p>
-      <p>Neutral {neutral}</p>
-      <p>Bad {bad}</p>
+      <StatisticsLine text="good" value={good} />
+      <StatisticsLine text="neutral" value={neutral} />
+      <StatisticsLine text="bad" value={bad} />
+      <StatisticsLine text="All" value={total} />
       <Average good={good} neutral={neutral} bad={bad} />
       <Positive good={good} neutral={neutral} bad={bad} />
     </div>
