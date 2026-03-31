@@ -2,37 +2,40 @@ import { useState } from 'react'
 import './App.css'
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: 'Arto Hellas' }]) 
+  const [persons, setPersons] = useState([{ name: 'Arto Hellas', number: '040-123456' }]) 
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
   console.log('persons', persons)
+  console.log('newName:', newName)
+  console.log('newNumber:', newNumber)
 
 const addPerson = (event) => {
   event.preventDefault()
   const personObject = {
     name: newName,
+    number: newNumber,
     id: persons.length + 1,
   }
-  setPersons(persons.concat(personObject))
+  
+  if (persons.map(person => person.name).includes(newName)) {
+    alert(`${newName} is already added to phonebook`)} 
+    else {
+  setPersons(persons.concat(personObject))}
   setNewName('')
+  setNewNumber('')
 }
 
   return (
     <div className='App'>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
       <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={(event) => setNewName(event.target.value)} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
+        <div> Name: <input value={newName} onChange={(event) => setNewName(event.target.value)} /></div>
+        <div> Numbers: <input value= {newNumber} onChange={(event) => setNewNumber(event.target.value)} /></div>        
+        <div><button type="submit">Add</button></div>      
+        <ul>
+        {persons.map(person => (<li key={person.id}> {person.name} {person.number}</li>))}
+        </ul>
       </form>
-      <h2>Numbers</h2>
-      <ul>
-        {persons.map(person => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
     </div>
   )
 }
