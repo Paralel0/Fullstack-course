@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import './App.css'
 import Filter from './Components/Filter'
-import Personsform from './Components/Personsform'
+import Person from './Components/Person'
+import PersonList from './Components/PersonList'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -13,10 +14,10 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   console.log('persons', persons)
-  console.log('newName:', newName)
+  console.log('newName:', newName)    //debugging
   console.log('newNumber:', newNumber)
 
-const addPerson = (event) => {
+const addPerson = (event) => {  //event handler for adding a new person to the phonebook
   event.preventDefault()
   const personObject = {
     name: newName,
@@ -24,7 +25,7 @@ const addPerson = (event) => {
     id: persons.length + 1,
   }
   
-  if (persons.map(person => person.name).includes(newName)) {
+  if (persons.map(person => person.name).includes(newName)) {   //check if the name already exists in the phonebook, low and high case are ignored
     alert(`${newName} is already added to phonebook`)} 
     else {
   setPersons(persons.concat(personObject))}
@@ -32,23 +33,21 @@ const addPerson = (event) => {
   setNewNumber('')
 }
 
-const filterByName = persons.filter(person => person.name.toLowerCase().includes(filterName.toLowerCase()))
+const filterByName = persons.filter(person => person.name.toLowerCase().includes(filterName.toLowerCase()))   //filter the list of persons based on the filterName state
 
-  return (
+  return (  //components rendered and necessary props
     <div className='App'>
       <h1>Phonebook</h1>
-      <div>Filter by name: <Filter filterName={filterName} setFilterName={setFilterName} /></div>
+      <div>Filter by: <Filter filterName={filterName} setFilterName={setFilterName} /></div>
       <h2>Add a new person:</h2>
-      <Personsform 
+      <Person
         addPerson={addPerson} 
         newName={newName} 
         handleNameChange={(event) => setNewName(event.target.value)} 
         newNumber={newNumber} 
         handleNumberChange={(event) => setNewNumber(event.target.value)} />        
-      <h2>Numbers</h2> 
-        <ul>
-        {filterByName.map(person => (<li key={person.id}> {person.name} {person.number}
-        </li>))}</ul>
+      <h2>Full list</h2> 
+      <PersonList persons={filterByName} />
     </div>
   )
 }
