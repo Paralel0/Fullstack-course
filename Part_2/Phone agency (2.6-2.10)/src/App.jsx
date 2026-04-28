@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect, use } from 'react'
 import './App.css'
 import Filter from './Components/Filter'
 import Person from './Components/Person'
 import PersonList from './Components/PersonList'
+import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -13,9 +14,23 @@ const App = () => {
   const [filterName, setFilterName] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [notes, setNotes] = useState([])
   console.log('persons', persons)
   console.log('newName:', newName)    //debugging
   console.log('newNumber:', newNumber)
+  console.log('notes', notes)
+
+  const hook = () => {   //obtaining from the server using axios
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/notes')
+      .then(response => {
+        console.log('promise fulfilled')
+        setNotes(response.data)
+      })
+  }
+  useEffect(hook, [])
+console.log('render', notes.length, 'notes')   //debugging
 
 const addPerson = (event) => {  //event handler for adding a new person to the phonebook
   event.preventDefault()
