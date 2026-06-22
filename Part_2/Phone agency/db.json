@@ -22,12 +22,7 @@
     },
     {
       "name": "a",
-      "number": " 1",
-      "id": "Ar4a0pgkcu8"
-    },
-    {
-      "name": "a",
-      "number": "1",
+      "number": "a",
       "id": "rpPbH8o0Ylo"
     },
     {
@@ -36,14 +31,14 @@
       "id": "h3qAVrYW7CY"
     },
     {
-      "name": "a",
+      "name": "test",
       "number": "1",
-      "id": "9tr3MXYaYR0"
+      "id": "wCZjopNm99I"
     },
     {
-      "name": "a",
+      "name": "q",
       "number": "1",
-      "id": "M-pZXi-7wz0"
+      "id": "wNJwcK9Q6-o"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

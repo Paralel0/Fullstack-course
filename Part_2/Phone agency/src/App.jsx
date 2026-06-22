@@ -4,6 +4,7 @@ import Filter from './Components/Filter'
 import Person from './Components/Person'
 import PersonList from './Components/PersonList'
 import axios from 'axios'
+import personService from './services/PersonsData'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -15,47 +16,56 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [notes, setNotes] = useState([])
-  console.log('persons', persons)
-  console.log('newName:', newName)    //debugging
-  console.log('newNumber:', newNumber)
-  console.log('notes', notes)
+  console.log('render', persons.length, 'persons') // debug
 
   useEffect(() => {   //obtaining from the server using axios
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
+    personService.getAll()
+      .then(initialPersons => {
         console.log('promise fulfilled')
-        setNotes(response.data)
+        setPersons(initialPersons)
       })
   }, [])
-  
-  useEffect(() => { 
-    console.log('notes changed', notes.length)   //debugging
-  }, [notes])
 
 const addPerson = (event) => {  //event handler for adding a new person to the phonebook
   event.preventDefault()
-  const personObject = {
-    name: newName,
-    number: newNumber,
-    id: persons.length + 1,
+  
+  if (persons.some(person => person.name === newName)) { //checking if the name already exists in the phonebook
+    if (window.confirm(`${newName} is already added to phonebook, do you wish to update the number?`)) {
+      const person = persons.find(p => p.name === newName)
+      const updatedPerson = { ...person, number: newNumber }
+      personService.update(person.id, updatedPerson)
+        .then(returnedPerson => {
+          console.log('person updated on server', returnedPerson)
+          setPersons(persons.map(p => p.id === person.id ? returnedPerson : p))
+          setNewName('')
+          setNewNumber('')
+        })
+    }
+    return
   }
 
-axios
-  .post('http://localhost:3001/persons', personObject)   //posting the new person to the server.
-    .then(response => {
-      console.log('person added to server', response)
-      setPersons(persons.concat(response.data))   //updating the persons state with the new person added to the server
-    }
-  )
+  const personObject = {
+    name: newName, number: newNumber, }
+  
+    personService.create(personObject)
+    .then(returnedPerson => {
+      console.log('person added to server', returnedPerson)
+      setPersons(persons.concat(returnedPerson))   //updating the persons state with the new person added to the server
+      setNewName('')
+      setNewNumber('')
+    })
+}
 
-  if (persons.map(person => person.name).includes(newName)) {   //check if the name already exists in the phonebook, low and high case are ignored
-    alert(`${newName} is already added to phonebook`)} 
-    else {
-  setPersons(persons.concat(personObject))}
-  setNewName('')
-  setNewNumber('')
+const deletePerson = (id) => {  //event handler for deleting a person from the phonebook
+  const person = persons.find(p => p.id === id)
+  if (window.confirm(`Confirm delete ${person.name}?`)) {
+    personService.remove(id)
+      .then(() => {
+        console.log('person deleted from server')
+        setPersons(persons.filter(p => p.id !== id))  //updating the persons state by removing the deleted person
+      })
+  }
 }
 
 const filterByName = persons.filter(person => person.name.toLowerCase().includes(filterName.toLowerCase()))   //filter the list of persons based on the filterName state
@@ -70,9 +80,10 @@ const filterByName = persons.filter(person => person.name.toLowerCase().includes
         newName={newName} 
         handleNameChange={(event) => setNewName(event.target.value)} 
         newNumber={newNumber} 
-        handleNumberChange={(event) => setNewNumber(event.target.value)} />        
+        handleNumberChange={(event) => setNewNumber(event.target.value)}/>            
       <h2>Full list</h2> 
-      <PersonList persons={filterByName} />
+      <PersonList persons={filterByName}
+      deletePerson={deletePerson} />
     </div>
   )
 }
